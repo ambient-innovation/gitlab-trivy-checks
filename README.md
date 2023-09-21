@@ -1,8 +1,8 @@
 This repository adds a job to your GitLab-CI to visualize the findings from Dependency(Security) and License Scanning as a CodeQuality Report widget in your merge requests.
 
-Dependency Scanning is often considered part of Software Composition Analysis (SCA). SCA can contain aspects of inspecting the items your code uses. These items typically include application and system dependencies that are almost always imported from external sources, rather than sourced from items you wrote yourself.
+[Dependency Scanning](https://github.com/ambient-innovation/gitlab-trivy-security-checks) is often considered part of Software Composition Analysis (SCA). SCA can contain aspects of inspecting the items your code uses. These items typically include application and system dependencies that are almost always imported from external sources, rather than sourced from items you wrote yourself.
 
-License Scanning is often considered part of Software Composition Analysis (SCA). SCA can contain aspects of inspecting the items your code uses. Open source software licenses define how you can use, modify and distribute the open source software. Thus, when selecting an open source package to merge to your code it is imperative to understand the types of licenses and the user restrictions the package falls under, which helps you mitigate any compliance issues.
+[License Scanning](https://github.com/ambient-innovation/gitlab-trivy-license-checks) is often considered part of Software Composition Analysis (SCA). SCA can contain aspects of inspecting the items your code uses. Open source software licenses define how you can use, modify and distribute the open source software. Thus, when selecting an open source package to merge to your code it is imperative to understand the types of licenses and the user restrictions the package falls under, which helps you mitigate any compliance issues.
 
 This config template can be included in your .gitlab-ci.yml to get both scanning jobs and the result visualisation for free.
 
