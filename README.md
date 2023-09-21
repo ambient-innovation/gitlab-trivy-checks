@@ -21,7 +21,6 @@ stages:
   - prebuild
   - build
   - test
-  - posttest
   - deploy
 ```
 
