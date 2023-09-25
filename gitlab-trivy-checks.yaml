@@ -6,6 +6,12 @@ check trivy scan results:
   stage: test
   image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/alpine:latest
   services: []
+  needs:
+    - container_scanning
+    - license_scanning
+    # List all your container/license scanning jobs here, one per line
+    # - container_scanning_frontend
+    # - license_scanning_frontend
   dependencies:
     - container_scanning
     - license_scanning
