@@ -5,6 +5,7 @@ include:
 check trivy scan results:
   stage: test
   image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/alpine:latest
+  services: []
   dependencies:
     - container_scanning
     - license_scanning
@@ -12,7 +13,7 @@ check trivy scan results:
     # - container_scanning_frontend
     # - license_scanning_frontend
   tags:
-    - low-load
+    - small-runner
   before_script:
     - apk update && apk add jq coreutils grep
   script:
