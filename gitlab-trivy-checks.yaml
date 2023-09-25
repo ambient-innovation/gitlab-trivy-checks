@@ -12,12 +12,6 @@ check trivy scan results:
     # List all your container/license scanning jobs here, one per line
     # - container_scanning_frontend
     # - license_scanning_frontend
-  dependencies:
-    - container_scanning
-    - license_scanning
-    # List all your container/license scanning jobs here, one per line
-    # - container_scanning_frontend
-    # - license_scanning_frontend
   tags:
     - small-runner
   before_script:
