@@ -42,7 +42,7 @@ a) scan an image as specified in the `IMAGE_TAG_BACKEND` variable,\
 b) perform a simple license scan\
 c) only report errors with a level of HIGH,CRITICAL or UNKNOWN. 
 
-**Note:** If you wish to run the `license_scanning` job in another stage than "`test`" (as it does by default) simply copy the above code to your .gitlab-ci.yml file and add the keyword `stage` with your custom stage name.
+**Note:** If you wish to run the `*_scanning` jobs in another stage than "`test`" (as they do by default) simply copy the above code to your .gitlab-ci.yml file and add the keyword `stage` with your custom stage name.
 
 Example for minimal stage-overwrite setup:
 
@@ -50,3 +50,19 @@ Example for minimal stage-overwrite setup:
 license_scanning:
   stage: my-custom-stage
 ```
+
+# Errors in Pipeline
+The `check trivy scan results` Job is built to be secure by default and will cause the job to fail in your pipeline if it finds any issues in either security or license scanning. The Job exits with a status code resembling the number of issues found.  
+Sometimes it's unavoidable to have security/license issues in your project, in those cases, you can decide to allow the job to fail by overriding the `check trivy scan results` job in your gitlab-ci.yml and enabling the `allow_failure` option.  
+Example:  
+```yaml
+check trivy scan results:
+  allow_failure: true
+```
+
+# More config options
+You can configure each of the scanner jobs with a ton of options not mentioned here.   
+Please check the corresponding repositories and the trivy documentation for more config options.
+* [Container Scanning](https://github.com/ambient-innovation/gitlab-trivy-security-checks)
+* [License Scanning](https://github.com/ambient-innovation/gitlab-trivy-license-checks)
+* [Trivy Documentation](https://aquasecurity.github.io/trivy/)
