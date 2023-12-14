@@ -25,5 +25,3 @@ check trivy scan results:
   artifacts:
     paths:
       - gl-codeclimate.json
-    reports:
-      codequality: gl-codeclimate.json
