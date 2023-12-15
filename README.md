@@ -2,9 +2,12 @@ This repository adds a job to your GitLab-CI to visualize the findings from Depe
 
 [Dependency Scanning](https://github.com/ambient-innovation/gitlab-trivy-security-checks) is often considered part of Software Composition Analysis (SCA). SCA can contain aspects of inspecting the items your code uses. These items typically include application and system dependencies that are almost always imported from external sources, rather than sourced from items you wrote yourself.
 
-[License Scanning](https://github.com/ambient-innovation/gitlab-trivy-license-checks) is often considered part of Software Composition Analysis (SCA). SCA can contain aspects of inspecting the items your code uses. Open source software licenses define how you can use, modify and distribute the open source software. Thus, when selecting an open source package to merge to your code it is imperative to understand the types of licenses and the user restrictions the package falls under, which helps you mitigate any compliance issues.
+[License Scanning](https://github.com/ambient-innovation/gitlab-trivy-license-checks) is often considered part of Compliance rules. Open source software licenses define how you can use, modify and distribute the open source software. Thus, when selecting an open source package to merge to your code it is imperative to understand the types of licenses and the user restrictions the package falls under, which helps you mitigate any compliance issues.
 
-This config template can be included in your .gitlab-ci.yml to get both scanning jobs and the result visualisation for free.
+[Config Scanning](https://github.com/ambient-innovation/gitlab-trivy-config-checks) could be considered part of a wider definition of SCA that inlcudes Infrastructure as Code to be part of Software. The config checks try to find common misconfigurations that pose security risks to your infrastructure - such as running services as the root account or storing secrets in versioned config files.
+
+
+This config template can be included in your .gitlab-ci.yml to get the above scanning jobs and the result visualisation for free.
 
 # Setup Instructions
 At the very top of your .gitlab-ci.yml either add or expand the include: section so it looks similar to this:  
@@ -26,14 +29,17 @@ stages:
 
 The **test** stage has to come after the docker image has already been built and pushed to the registry or the scanner will not work.
 
-Last but not least you need one job within that test stage going by the name `license_scanning` and one with the name `container_scanning`. A minimal config looks like this:  
+Last but not least you need one job within that test stage going by the name `license_scanning`, one with the name `container_scanning` and one with the name `config_scanning`. A minimal config to check your backend container dependencies for vulnerabilities and license issues as well as the `helmcharts` directory for config issues looks like this:  
 ```yaml
 license_scanning:
   variables:
     IMAGE: $IMAGE_TAG_BACKEND
 container_scanning:
   variables:
-    IMAGE: $IMAGE_TAG_BACKEND    
+    IMAGE: $IMAGE_TAG_BACKEND
+config_scanning:
+  variables:
+    DIRECTORY: helmcharts
 ```
 
 The example shown here will overwrite the `scanning` jobs from the template and tell them to
@@ -65,4 +71,5 @@ You can configure each of the scanner jobs with a ton of options not mentioned h
 Please check the corresponding repositories and the trivy documentation for more config options.
 * [Container Scanning](https://github.com/ambient-innovation/gitlab-trivy-security-checks)
 * [License Scanning](https://github.com/ambient-innovation/gitlab-trivy-license-checks)
+* [Config Scanning](https://github.com/ambient-innovation/gitlab-trivy-config-checks)
 * [Trivy Documentation](https://aquasecurity.github.io/trivy/)
