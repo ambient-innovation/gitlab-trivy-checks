@@ -1,6 +1,7 @@
 include:
   - remote: https://raw.githubusercontent.com/ambient-innovation/gitlab-trivy-security-checks/main/security-checks.yaml
   - remote: https://raw.githubusercontent.com/ambient-innovation/gitlab-trivy-license-checks/main/license-checks.yaml 
+  - remote: https://raw.githubusercontent.com/ambient-innovation/gitlab-trivy-config-checks/main/config-checks.yaml 
 
 check trivy scan results:
   stage: test
@@ -9,7 +10,8 @@ check trivy scan results:
   needs:
     - container_scanning
     - license_scanning
-    # List all your container/license scanning jobs here, one per line
+    - config_scanning
+    # List all your container/license/config scanning jobs here, one per line
     # - container_scanning_frontend
     # - license_scanning_frontend
   tags:
