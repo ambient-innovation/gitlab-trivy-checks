@@ -6,6 +6,8 @@ This repository adds a job to your GitLab-CI to visualize the findings from Depe
 
 This config template can be included in your .gitlab-ci.yml to get both scanning jobs and the result visualisation for free.
 
+* [Config Scanning](https://github.com/ambient-innovation/gitlab-trivy-config-checks) for Dockerfiles and configuration files (such as Helm charts or AWS Cloudformation) is also available either separately (with a separate `include` entry) or as an opt-in (see *Full configuration* below).
+
 # Setup Instructions
 At the very top of your .gitlab-ci.yml either add or expand the include: section so it looks similar to this:  
 ```yaml
@@ -40,16 +42,8 @@ The example shown here will overwrite the `scanning` jobs from the template and 
 
 a) scan an image as specified in the `IMAGE_TAG_BACKEND` variable,\
 b) perform a simple license scan\
-c) only report errors with a level of HIGH,CRITICAL or UNKNOWN. 
+c) only report errors with a level of HIGH,CRITICAL or UNKNOWN.
 
-**Note:** If you wish to run the `*_scanning` jobs in another stage than "`test`" (as they do by default) simply copy the above code to your .gitlab-ci.yml file and add the keyword `stage` with your custom stage name.
-
-Example for minimal stage-overwrite setup:
-
-```yaml
-license_scanning:
-  stage: my-custom-stage
-```
 
 # Errors in Pipeline
 The `check trivy scan results` Job is built to be secure by default and will cause the job to fail in your pipeline if it finds any issues in either security or license scanning. The Job exits with a status code resembling the number of issues found.  
@@ -60,9 +54,56 @@ check trivy scan results:
   allow_failure: true
 ```
 
+
+# Customising the pipeline job
+## Running the job in a different stage
+If you wish to run the `*_scanning` jobs in another stage than "`test`" (as they do by default) simply copy the above code to your .gitlab-ci.yml file and add the keyword `stage` with your custom stage name.
+
+Example for minimal stage-overwrite setup:
+```yaml
+license_scanning:
+  stage: my-custom-stage
+```
+
+You can do the same for `check trivy scan results` if needed.
+
+## Full customisation
+If you want to customise the job name or opt out of one of the scanning jobs, the above method will not work because the original job will be added to the pipeline in addition to any job that extends it.
+
+To be able to fully customise the pipeline job, replace the entry in `include` like so:
+```yaml
+include:
+  - remote: https://raw.githubusercontent.com/ambient-innovation/gitlab-trivy-checks/main/gitlab-trivy-checks-custom.yaml
+```
+
+Note the file name change at the end.
+
+With this file, no job will be added automatically anymore, and to enable each job you will have to extend it. For example:
+```yaml
+# Any name goes.
+scan results:
+  # Notice the . at the start and _ instead of spaces:
+  extends: [ .check_trivy_scan_results ]
+  # Any stage you like, you don't need to include a `test` stage anymore.
+  stage: security scan
+
+# You can now have a uniform interface for different parts of the application:
+frontend:container scanning:
+  extends: [ .container_scanning ]
+  stage: container scanning
+
+backend:container scanning:
+  extends: [ .container_scanning ]
+  stage: container scanning
+```
+
+The `-custom.yaml` file also includes [a `.config_scanning` job](https://github.com/ambient-innovation/gitlab-trivy-config-checks) which is not automatically included in the default YAML file for compatibility reasons.
+
+
 # More config options
 You can configure each of the scanner jobs with a ton of options not mentioned here.   
 Please check the corresponding repositories and the trivy documentation for more config options.
 * [Container Scanning](https://github.com/ambient-innovation/gitlab-trivy-security-checks)
 * [License Scanning](https://github.com/ambient-innovation/gitlab-trivy-license-checks)
+* [Config Scanning](https://github.com/ambient-innovation/gitlab-trivy-config-checks)
 * [Trivy Documentation](https://aquasecurity.github.io/trivy/)
