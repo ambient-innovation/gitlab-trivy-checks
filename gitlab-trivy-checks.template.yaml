@@ -1,7 +1,7 @@
 include:
-  - remote: https://raw.githubusercontent.com/ambient-innovation/gitlab-trivy-security-checks/main/security-checks-custom.yaml
-  - remote: https://raw.githubusercontent.com/ambient-innovation/gitlab-trivy-license-checks/main/license-checks-custom.yaml
-  - remote: https://raw.githubusercontent.com/ambient-innovation/gitlab-trivy-config-checks/main/config-checks-custom.yaml
+  - remote: https://raw.githubusercontent.com/ambient-innovation/gitlab-trivy-security-checks/main/security-checks.template.yaml
+  - remote: https://raw.githubusercontent.com/ambient-innovation/gitlab-trivy-license-checks/main/license-checks.template.yaml
+  - remote: https://raw.githubusercontent.com/ambient-innovation/gitlab-trivy-config-checks/main/config-checks.template.yaml
 
 .check_trivy_scan_results:
   stage: test

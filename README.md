@@ -73,7 +73,7 @@ If you want to customise the job name or opt out of one of the scanning jobs, th
 To be able to fully customise the pipeline job, replace the entry in `include` like so:
 ```yaml
 include:
-  - remote: https://raw.githubusercontent.com/ambient-innovation/gitlab-trivy-checks/main/gitlab-trivy-checks-custom.yaml
+  - remote: https://raw.githubusercontent.com/ambient-innovation/gitlab-trivy-checks/main/gitlab-trivy-checks.template.yaml
 ```
 
 Note the file name change at the end.
@@ -97,7 +97,7 @@ backend:container scanning:
   stage: container scanning
 ```
 
-The `-custom.yaml` file also includes [a `.config_scanning` job](https://github.com/ambient-innovation/gitlab-trivy-config-checks) which is not automatically included in the default YAML file for compatibility reasons.
+The `.template.yaml` file also includes [a `.config_scanning` job](https://github.com/ambient-innovation/gitlab-trivy-config-checks) which is not automatically included in the default YAML file for compatibility reasons.
 
 
 # More config options
