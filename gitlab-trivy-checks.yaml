@@ -1,8 +1,30 @@
 include:
   - remote: https://raw.githubusercontent.com/ambient-innovation/gitlab-trivy-checks/main/gitlab-trivy-checks.template.yaml
 
-check trivy scan results: !reference [ .check_trivy_scan_results ]
+check trivy scan results: 
+  artifacts: !reference [ .check_trivy_scan_results, artifacts ]
+  before_script: !reference [ .check_trivy_scan_results, before_script ]
+  image: !reference [ .check_trivy_scan_results, image ]
+  needs: !reference [ .check_trivy_scan_results, needs ]
+  script: !reference [ .check_trivy_scan_results, script ]
+  tags: !reference [ .check_trivy_scan_results, tags ]
 
-container_scanning: !reference [ .container_scanning ]
+container_scanning: 
+  allow_failure: !reference [ .container_scanning, scripts ]
+  artifacts: !reference [ .container_scanning, artifacts ]
+  cache: !reference [ .container_scanning, cache ]
+  image: !reference [ .check_trivy_scan_results, image ]
+  script: !reference [ .container_scanning, scripts ]
+  stage: !reference [ .check_trivy_scan_results, stage ]
+  tags: !reference [ .check_trivy_scan_results, tags ]
+  variables: !reference [ .check_trivy_scan_results, variables ]
 
-license_scanning: !reference [ .license_scanning ]
+license_scanning:
+  allow_failure: !reference [ .container_scanning, scripts ]
+  artifacts: !reference [ .container_scanning, artifacts ]
+  cache: !reference [ .container_scanning, cache ]
+  image: !reference [ .check_trivy_scan_results, image ]
+  script: !reference [ .container_scanning, scripts ]
+  stage: !reference [ .check_trivy_scan_results, stage ]
+  tags: !reference [ .check_trivy_scan_results, tags ]
+  variables: !reference [ .check_trivy_scan_results, variables ]
