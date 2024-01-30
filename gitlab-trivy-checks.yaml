@@ -1,11 +1,8 @@
 include:
   - remote: https://raw.githubusercontent.com/ambient-innovation/gitlab-trivy-checks/main/gitlab-trivy-checks.template.yaml
 
-check trivy scan results:
-  extends: [ .check_trivy_scan_results ]
+check trivy scan results: !reference [ .check_trivy_scan_results ]
 
-container_scanning:
-  extends: [ .license_scanning ]
+container_scanning: !reference [ .container_scanning ]
 
-license_scanning:
-  extends: [ .license_scanning ]
+license_scanning: !reference [ .license_scanning ]
