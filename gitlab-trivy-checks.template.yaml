@@ -1,9 +1,47 @@
-include:
-  - remote: https://raw.githubusercontent.com/ambient-innovation/gitlab-trivy-security-checks/main/security-checks.template.yaml
-  - remote: https://raw.githubusercontent.com/ambient-innovation/gitlab-trivy-license-checks/main/license-checks.template.yaml
-  - remote: https://raw.githubusercontent.com/ambient-innovation/gitlab-trivy-config-checks/main/config-checks.template.yaml
+# ⚠️ DEPRECATION WARNING ⚠️
+# This template is DEPRECATED and will be removed in a future version.
+# Please migrate to the new unified trivy-scanning.template.yaml
 
-.check_trivy_scan_results:
+.container_scanning:
+  extends: .trivy_scanning
+  variables:
+    # Deprecated: Use the new trivy_scanning template directly
+    PLUGIN_SEVERITY_VULN: "HIGH,CRITICAL"
+    PLUGIN_SEVERITY_MISCONFIG: "HIGH,CRITICAL"
+    PLUGIN_PKG_TYPES_VULN: "os,library"
+    # Override scanner types for security scanning
+    TRIVY_SCANNERS: "vuln,misconfig"
+  before_script:
+    # Show deprecation warning
+    - echo "⚠️  WARNING: The .container_scanning template is DEPRECATED!"
+    - echo "⚠️  Please migrate to .trivy_scanning template."
+    - echo "⚠️  See migration guide: https://github.com/$CI_PROJECT_PATH/releases/latest"
+    - echo "⚠️  This template will be removed in a future version."
+    - echo "⚠️  Note: Security scanning supports both IMAGE and DIRECTORY variables!"
+    - echo ""
+    # Call parent before_script
+    - !reference [.trivy_scanning, before_script]
+
+.license_scanning:
+  extends: .trivy_scanning
+  variables:
+    # Deprecated: Use the new trivy_scanning template directly
+    PLUGIN_SEVERITY_LICENSE: "HIGH,CRITICAL,UNKNOWN"
+    PLUGIN_PKG_TYPES_LICENSE: "library,os"
+    # Override scanner types for license-only scanning
+    TRIVY_SCANNERS: "license"
+  before_script:
+    # Show deprecation warning
+    - echo "⚠️  WARNING: The .license_scanning template is DEPRECATED!"
+    - echo "⚠️  Please migrate to .trivy_scanning template."
+    - echo "⚠️  See migration guide: https://github.com/$CI_PROJECT_PATH/releases/latest"
+    - echo "⚠️  This template will be removed in a future version."
+    - echo "⚠️  Note: License scanning requires the IMAGE variable to be set!"
+    - echo ""
+    # Call parent before_script
+    - !reference [.trivy_scanning, before_script]
+
+.check_trivy_scan:
   stage: test
   image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/alpine:latest
   services: []
@@ -31,3 +69,7 @@ include:
   artifacts:
     paths:
       - gl-codeclimate.json
+
+# Include the new unified template
+include:
+  - remote: 'https://github.com/ambient-innovation/trivy-scanner-templates/releases/latest/download/trivy-scanning.template.yaml'
