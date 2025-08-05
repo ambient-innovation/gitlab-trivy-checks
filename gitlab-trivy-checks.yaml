@@ -2,6 +2,8 @@
 # This template is DEPRECATED and will be removed in a future version.
 # Please migrate to the new unified trivy-scanning.template.yaml
 
+# For more information, see: https://github.com/ambient-innovation/trivy-scanner-templates/releases/latest
+
 # Include the new unified template
 include:
   - remote: 'https://github.com/ambient-innovation/trivy-scanner-templates/releases/latest/download/trivy-scanning.template.yaml'

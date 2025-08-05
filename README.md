@@ -1,9 +1,3 @@
-# ⚠️ DEPRECATION WARNING ⚠️
-This template is DEPRECATED and will be removed in a future version.  
-
-
-
-
 # ⚠️ Migration Notice
 
 IMPORTANT: The individual template files (config-checks, license-checks, security-checks) are now DEPRECATED.
