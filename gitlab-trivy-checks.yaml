@@ -7,7 +7,7 @@ include:
   - remote: 'https://raw.githubusercontent.com/ambient-innovation/gitlab-trivy-security-checks/main/security-checks.template.yaml'
 
 .container_scanning:
-  extends: .ontainer_scanning
+  extends: .container_scanning
 
 license_scanning:
   extends: .license_scanning
