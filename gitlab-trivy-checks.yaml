@@ -4,7 +4,7 @@
 
 # For more information, see: https://github.com/ambient-innovation/gitlab-trivy-codequality-template/releases/latest
 include:
-  - remote: 'https://raw.githubusercontent.com/ambient-innovation/gitlab-trivy-security-checks/main/security-checks.template.yaml'
+  - remote: 'https://raw.githubusercontent.com/ambient-innovation/gitlab-trivy-checks/main/gitlab-trivy-checks.template.yaml'
 
 .container_scanning:
   extends: .container_scanning
