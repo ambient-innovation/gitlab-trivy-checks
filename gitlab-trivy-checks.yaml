@@ -15,5 +15,5 @@ license_scanning:
 config_scanning:
   extends: .config_scanning
 
-check_trivy_scan:
-  extends: .check_trivy_scan
+check trivy scan results:
+  extends: .check_trivy_scan_results

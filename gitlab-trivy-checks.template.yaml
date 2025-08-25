@@ -4,15 +4,23 @@
 
 # For more information, see: https://github.com/ambient-innovation/gitlab-trivy-codequality-template/releases/latest
 
-.container_scanning:
-  extends: .trivy_scanning
-  variables:
-    # Deprecated: Use the new trivy_scanning template directly
-    PLUGIN_SEVERITY_VULN: "HIGH,CRITICAL"
-    PLUGIN_SEVERITY_MISCONFIG: "HIGH,CRITICAL"
-    PLUGIN_PKG_TYPES_VULN: "os,library"
-    # Override scanner types for security scanning
-    TRIVY_SCANNERS: "vuln,misconfig"
+include:
+  - remote: https://raw.githubusercontent.com/ambient-innovation/gitlab-trivy-security-checks/main/security-checks.template.yaml
+  - remote: https://raw.githubusercontent.com/ambient-innovation/gitlab-trivy-license-checks/main/license-checks.template.yaml
+  - remote: https://raw.githubusercontent.com/ambient-innovation/gitlab-trivy-config-checks/main/config-checks.template.yaml
+
+.check_trivy_scan_results:
+  stage: test
+  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/alpine:latest
+  services: []
+  needs:
+    - container_scanning
+    - license_scanning
+    # List all your container/license scanning jobs here, one per line
+    # - container_scanning_frontend
+    # - license_scanning_frontend
+  tags:
+    - small-runner
   before_script:
     # Show deprecation warning
     - echo "⚠️  WARNING: The .container_scanning template is DEPRECATED!"
@@ -21,60 +29,18 @@
     - echo "⚠️  This template will be removed in a future version."
     - echo "⚠️  Note: Security scanning supports both IMAGE and DIRECTORY variables!"
     - echo ""
-    # Call parent before_script
-    - !reference [.trivy_scanning, before_script]
-
-.license_scanning:
-  extends: .trivy_scanning
-  variables:
-    # Deprecated: Use the new trivy_scanning template directly
-    PLUGIN_SEVERITY_LICENSE: "HIGH,CRITICAL,UNKNOWN"
-    PLUGIN_PKG_TYPES_LICENSE: "library"
-    # Override scanner types for license-only scanning
-    TRIVY_SCANNERS: "license"
-  before_script:
-    # Show deprecation warning
-    - echo "⚠️  WARNING: The .license_scanning template is DEPRECATED!"
-    - echo "⚠️  Please migrate to .trivy_scanning template."
-    - echo "⚠️  See migration guide: https://github.com/ambient-innovation/gitlab-trivy-codequality-template/releases/latest"
-    - echo "⚠️  This template will be removed in a future version."
-    - echo "⚠️  Note: License scanning requires the IMAGE variable to be set!"
-    - echo ""
-    # Call parent before_script
-    - !reference [.trivy_scanning, before_script]
-
-.config_scanning:
-  extends: .trivy_scanning
-  variables:
-    # Deprecated: Use the new trivy_scanning template directly
-    PLUGIN_SEVERITY_MISCONFIG: "MEDIUM,HIGH,CRITICAL,UNKNOWN"
-    PLUGIN_PKG_TYPES_MISCONFIG: "library, os"
-    # Override scanner types for config-only scanning
-    TRIVY_SCANNERS: "misconfig"
-  before_script:
-    # Show deprecation warning
-    - echo "⚠️  WARNING: The .config_scanning template is DEPRECATED!"
-    - echo "⚠️  Please migrate to .trivy_scanning template."
-    - echo "⚠️  See migration guide: https://github.com/ambient-innovation/gitlab-trivy-codequality-template/releases/latest"
-    - echo "⚠️  This template will be removed in a future version."
-    - echo ""
-    # Call parent before_script
-    - !reference [.trivy_scanning, before_script]
-
-.check_trivy_scan:
-  stage: test
-  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/alpine:latest
-  services: []
-  needs:
-    - container_scanning
-    - license_scanning
-    - config_scanning
-    # List all your container/license scanning jobs here, one per line
-    # - container_scanning_frontend
-    # - license_scanning_frontend
-  tags:
-    - small-runner
-
-# Include the new unified template
-include:
-  - remote: 'https://github.com/ambient-innovation/gitlab-trivy-codequality-template/releases/download/v25.08.06.3/trivy-scanning.template.yaml'
+    - apk update && apk add jq coreutils grep
+  script:
+    - echo "Step 1 - Merge all codeclimate reports from scanning jobs"
+    - jq -s 'add' gl-codeclimate*.json > gl-codeclimate.json
+    - echo "Step 2 - Check if there were any vulnerabilities and exit with a status code equal to the number of vulnerabilities"
+    # if . == null > all codeclimate-files were empty (null) -> No issues found, else find and count all type == "issue" elements
+    # Exit codes:
+    # 0 => jq returned true - no issues found
+    # 1 => jq returned false/null - found more than 0 issues
+    # 4 => jq found a syntax error in the merged JSON file
+    - jq -e 'if . == null then true else map(select(.type == "issue")) | length == 0 end' ./gl-codeclimate.json
+  # Enables CodeQuality Widget in Merge Request
+  artifacts:
+    paths:
+      - gl-codeclimate.json
