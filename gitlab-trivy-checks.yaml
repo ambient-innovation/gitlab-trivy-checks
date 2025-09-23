@@ -6,9 +6,6 @@
 include:
   - remote: 'https://raw.githubusercontent.com/ambient-innovation/gitlab-trivy-checks/main/gitlab-trivy-checks.template.yaml'
 
-.container_scanning:
-  extends: .container_scanning
-
 license_scanning:
   extends: .license_scanning
 
